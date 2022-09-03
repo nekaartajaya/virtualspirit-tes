@@ -16,8 +16,7 @@ const Layout = ({getPostSaga}) => {
   const [isOpenModalEdit, setIsOpenModalEdit] = useState(false);
   const [isOpenModalDelete, setIsOpenModalDelete] = useState(false);
   const [data, setData] = useState(null);
-  const [page, setPage] = useState(1);
-  const {loading, loadingCUD, posts} = useSelector((state) => state.postReducer);
+  const {loading, loadingCUD, posts, page} = useSelector((state) => state.postReducer);
 
   useEffect(() => {
     getPostSaga(page);
@@ -41,8 +40,7 @@ const Layout = ({getPostSaga}) => {
   }, [loadingCUD]);
 
   const handleChangePage = () => {
-    setPage(page + 1);
-    if (page <= 20 && page !== 1) getPostSaga(page);
+    getPostSaga(page);
   };
 
   const handleOpenModalAdd = () => {
@@ -72,7 +70,7 @@ const Layout = ({getPostSaga}) => {
         <br />
         LIST POST
       </div>
-      <div className="text-center italic">*note : scroll to load more post</div>
+      <div className="text-center italic mb-4">*note : scroll to load more post</div>
 
       <div className="w-full text-right mb-5">
         <Button size="small" variant="contained" onClick={() => handleOpenModalAdd()}>

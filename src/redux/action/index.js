@@ -1,6 +1,7 @@
 export const SET_LOADING = 'SET_LOADING';
 export const GET_POST = 'GET_POST';
 export const GET_POST_REQUESTED = 'GET_POST_REQUESTED';
+export const CHANGE_PAGE = 'CHANGE_PAGE';
 export const SET_LOADING_CUD = 'SET_LOADING_CUD';
 export const DELETE_POST = 'DELETE_POST';
 export const DELETE_POST_REQUESTED = 'DELETE_POST_REQUESTED';

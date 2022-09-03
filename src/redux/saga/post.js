@@ -11,6 +11,7 @@ import {
   UPDATE_POST,
   CREATE_POST,
   CREATE_POST_REQUESTED,
+  CHANGE_PAGE,
 } from '../action';
 
 function* getPostSaga({payload}) {
@@ -19,6 +20,8 @@ function* getPostSaga({payload}) {
   const posts = yield call(getPost, payload);
 
   yield put({type: GET_POST, payload: posts.data});
+
+  yield put({type: CHANGE_PAGE});
 }
 
 function* createPostSaga({payload}) {

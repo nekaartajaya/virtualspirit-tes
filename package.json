@@ -16,6 +16,7 @@
     "iconsax-react": "^0.0.8",
     "react": "^18.2.0",
     "react-bottom-scroll-listener": "^5.1.0",
+    "react-detect-offline": "^2.4.5",
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
     "react-redux": "^8.0.2",

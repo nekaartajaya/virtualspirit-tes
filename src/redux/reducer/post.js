@@ -1,4 +1,5 @@
 import {
+  CHANGE_PAGE,
   CREATE_POST,
   DELETE_POST,
   GET_POST,
@@ -9,6 +10,7 @@ import {
 
 const initState = {
   posts: [],
+  page: 1,
   loading: false,
   loadingCUD: false,
 };
@@ -21,6 +23,12 @@ const postReducer = (state = initState, {type, payload}) => {
         posts: [...state.posts, ...payload],
         loading: false,
       };
+    case CHANGE_PAGE: {
+      return {
+        ...state,
+        page: state.page + 1,
+      };
+    }
     case SET_LOADING:
       return {
         ...state,
