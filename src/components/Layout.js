@@ -1,20 +1,16 @@
 import CustomCard from '../components/CustomCard';
-import CustomModal from '../components/CustomModal';
-import {
-  CREATE_POST_REQUESTED,
-  DELETE_POST_REQUESTED,
-  GET_POST_REQUESTED,
-  UPDATE_POST_REQUESTED,
-} from '../redux/action';
+import {GET_POST_REQUESTED} from '../redux/action';
 import {useEffect, useState} from 'react';
 import {connect, useSelector} from 'react-redux';
-import {Button, TextField} from '@mui/material';
+import {Button} from '@mui/material';
 import {useBottomScrollListener} from 'react-bottom-scroll-listener';
 import LoadingCard from './LoadingCard';
-import {useFormik} from 'formik';
 import {ToastContainer, toast} from 'react-toastify';
+import FormAdd from './form/FormAdd';
+import FormEdit from './form/FormEdit';
+import FormDelete from './form/FormDelete';
 
-const Layout = ({getPostSaga, createPostSaga, updatePostSaga, deletePostSaga}) => {
+const Layout = ({getPostSaga}) => {
   const [isOpenModalAdd, setIsOpenModalAdd] = useState(false);
   const [isOpenModalEdit, setIsOpenModalEdit] = useState(false);
   const [isOpenModalDelete, setIsOpenModalDelete] = useState(false);
@@ -27,21 +23,25 @@ const Layout = ({getPostSaga, createPostSaga, updatePostSaga, deletePostSaga}) =
   }, []);
 
   useEffect(() => {
-    formikEdit.setFieldValue('id', data?.id ?? '');
-    formikEdit.setFieldValue('userId', data?.userId ?? '');
-    formikEdit.setFieldValue('title', data?.title ?? '');
-    formikEdit.setFieldValue('body', data?.body ?? '');
-  }, [data]);
+    if (!loadingCUD) {
+      if (isOpenModalAdd) {
+        setIsOpenModalAdd(false);
+        toast.success('New post created', {position: 'top-center'});
+      }
+      if (isOpenModalEdit) {
+        setIsOpenModalEdit(false);
+        toast.success('Post updated', {position: 'top-center'});
+      }
+      if (isOpenModalDelete) {
+        setIsOpenModalDelete(false);
+        toast.success('Post deleted', {position: 'top-center'});
+      }
+    }
+  }, [loadingCUD]);
 
   const handleChangePage = () => {
     setPage(page + 1);
     if (page <= 20 && page !== 1) getPostSaga(page);
-  };
-
-  useBottomScrollListener(handleChangePage);
-
-  const handleDelete = () => {
-    deletePostSaga(data?.id);
   };
 
   const handleOpenModalAdd = () => {
@@ -49,45 +49,7 @@ const Layout = ({getPostSaga, createPostSaga, updatePostSaga, deletePostSaga}) =
     setIsOpenModalAdd(true);
   };
 
-  const formikEdit = useFormik({
-    initialValues: {
-      id: data?.id ?? '',
-      userId: data?.userId ?? '',
-      title: data?.title ?? '',
-      body: data?.body ?? '',
-    },
-    onSubmit: (values) => {
-      updatePostSaga(values.id, values);
-    },
-  });
-
-  const formikAdd = useFormik({
-    initialValues: {
-      userId: 1,
-      title: '',
-      body: '',
-    },
-    onSubmit: (values) => {
-      createPostSaga(values);
-    },
-  });
-
-  useEffect(() => {
-    if (!loadingCUD) {
-      if (isOpenModalAdd) {
-        setIsOpenModalAdd(false);
-        toast.success('New post created');
-      }
-      if (isOpenModalEdit) {
-        setIsOpenModalEdit(false);
-        toast.success('Post updated');
-      }
-      if (isOpenModalDelete) {
-        setIsOpenModalDelete(false);
-        toast.success('Post deleted');
-      }
-    }
-  }, [loadingCUD]);
+  useBottomScrollListener(handleChangePage);
 
   const loadingPost = [];
   for (let i = 0; i < 4; i++) {
@@ -103,7 +65,7 @@ const Layout = ({getPostSaga, createPostSaga, updatePostSaga, deletePostSaga}) =
         <br />
         LIST POST
       </div>
-      <div className="text-center italic">*note : scroll to load more data</div>
+      <div className="text-center italic">*note : scroll to load more post</div>
 
       <div className="w-full text-right mb-5">
         <Button size="small" variant="contained" onClick={() => handleOpenModalAdd()}>
@@ -132,155 +94,28 @@ const Layout = ({getPostSaga, createPostSaga, updatePostSaga, deletePostSaga}) =
         {loading && loadingPost}
       </div>
 
-      {/* MODAL ADD */}
-      <CustomModal
-        isOpen={isOpenModalAdd}
-        title={'Add New Post'}
-        type={'medium'}
-        onClose={() => setIsOpenModalAdd(false)}
-      >
-        <div className="text-[14px] text-[#344054] my-6">
-          <div className="mb-6">
-            <TextField
-              value={formikAdd?.values?.title}
-              label="Title"
-              variant="outlined"
-              fullWidth
-              onChange={(e) => formikAdd.setFieldValue('title', e.target.value)}
-            />
-          </div>
-          <div>
-            <TextField
-              value={formikAdd?.values?.body}
-              label="Body"
-              variant="outlined"
-              fullWidth
-              minRows={4}
-              multiline
-              onChange={(e) => formikAdd.setFieldValue('body', e.target.value)}
-            />
-          </div>
-        </div>
-        <div className="flex justify-end gap-4">
-          {!loadingCUD && (
-            <Button
-              size="small"
-              variant="contained"
-              color="info"
-              onClick={() => {
-                setIsOpenModalAdd(false);
-              }}
-            >
-              Cancel
-            </Button>
-          )}
-          <Button
-            size="small"
-            variant="contained"
-            color="success"
-            onClick={() => formikAdd.handleSubmit()}
-            disabled={loadingCUD}
-          >
-            {loadingCUD ? 'Creating...' : 'Create'}
-          </Button>
-        </div>
-      </CustomModal>
+      {/* FORM ADD */}
+      <FormAdd isOpenModalAdd={isOpenModalAdd} onClose={() => setIsOpenModalAdd(false)} />
 
-      {/* MODAL EDIT */}
-      <CustomModal
-        isOpen={isOpenModalEdit}
-        title={'Edit'}
-        type={'medium'}
+      {/* FORM EDIT */}
+      <FormEdit
+        isOpenModalEdit={isOpenModalEdit}
         onClose={() => setIsOpenModalEdit(false)}
-      >
-        <div className="text-[14px] text-[#344054] my-6">
-          <div className="mb-6">
-            <TextField
-              value={formikEdit?.values?.title}
-              label="Title"
-              variant="outlined"
-              fullWidth
-              onChange={(e) => formikEdit.setFieldValue('title', e.target.value)}
-            />
-          </div>
-          <div>
-            <TextField
-              value={formikEdit?.values?.body}
-              label="Body"
-              variant="outlined"
-              fullWidth
-              minRows={4}
-              multiline
-              onChange={(e) => formikEdit.setFieldValue('body', e.target.value)}
-            />
-          </div>
-        </div>
-        <div className="flex justify-end gap-4">
-          {!loadingCUD && (
-            <Button
-              size="small"
-              variant="contained"
-              color="info"
-              onClick={() => {
-                setIsOpenModalEdit(false);
-              }}
-            >
-              Cancel
-            </Button>
-          )}
-          <Button
-            size="small"
-            variant="contained"
-            color="warning"
-            onClick={() => formikEdit.handleSubmit()}
-            disabled={loadingCUD}
-          >
-            {loadingCUD ? 'Updating...' : 'Update'}
-          </Button>
-        </div>
-      </CustomModal>
+        data={data}
+      />
 
-      {/* MODAL DELETE */}
-      <CustomModal
-        isOpen={isOpenModalDelete}
-        title={'Delete'}
-        type={'small'}
+      {/* FORM DELETE */}
+      <FormDelete
+        isOpenModalDelete={isOpenModalDelete}
         onClose={() => setIsOpenModalDelete(false)}
-      >
-        <div className="text-[14px] text-[#344054] my-6">Are you sure to delete this post ?</div>
-        <div className="flex justify-end gap-4">
-          {!loadingCUD && (
-            <Button
-              size="small"
-              variant="contained"
-              color="info"
-              onClick={() => {
-                setIsOpenModalDelete(false);
-              }}
-            >
-              Cancel
-            </Button>
-          )}
-          <Button
-            size="small"
-            variant="contained"
-            color="error"
-            onClick={() => handleDelete()}
-            disabled={loadingCUD}
-          >
-            {loadingCUD ? 'Deleting...' : 'Delete'}
-          </Button>
-        </div>
-      </CustomModal>
+        data={data}
+      />
     </div>
   );
 };
 
 const mapDispatchToProps = (dispatch) => ({
   getPostSaga: (page) => dispatch({type: GET_POST_REQUESTED, payload: page}),
-  deletePostSaga: (id) => dispatch({type: DELETE_POST_REQUESTED, payload: id}),
-  updatePostSaga: (id, body) => dispatch({type: UPDATE_POST_REQUESTED, payload: {id, body}}),
-  createPostSaga: (body) => dispatch({type: CREATE_POST_REQUESTED, payload: body}),
 });
 
 export default connect(null, mapDispatchToProps)(Layout);
