@@ -4,21 +4,21 @@ import {Edit, Trash} from 'iconsax-react';
 const CustomCard = ({...props}) => {
   return (
     <Card>
-      <div className="flex gap-2">
+      <div className="sm:flex gap-2">
         <div
-          className="w-full max-w-[150px]"
+          className="w-full sm:max-w-[150px]"
           // style={{backgroundImage: `url(https://picsum.photos/id/${props?.pictId}/150/150)`}}
         >
           <img
             src={`https://picsum.photos/id/${props?.pictId}/150/150`}
             alt="random pict"
-            className="w-[150px] h-[150px]"
+            className="sm:w-[150px] w-full sm:h-[150px]"
           />
         </div>
         <div className="p-2 w-full flex flex-col justify-between">
-          <div>
-            <div className="text-base font-medium mb-2">{props?.data?.title}</div>
-            <div className="text-[12px]">{props?.data?.body}</div>
+          <div className="sm:mb-0 mb-4">
+            <div className="text-[14px] font-bold mb-2 title-ellipsis">{props?.data?.title}</div>
+            <div className="text-[12px] body-ellipsis">{props?.data?.body}</div>
           </div>
           <div className="flex gap-2">
             <Button
