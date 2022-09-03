@@ -9,6 +9,7 @@ import {ToastContainer, toast} from 'react-toastify';
 import FormAdd from './form/FormAdd';
 import FormEdit from './form/FormEdit';
 import FormDelete from './form/FormDelete';
+import {Helmet} from 'react-helmet';
 
 const Layout = ({getPostSaga}) => {
   const [isOpenModalAdd, setIsOpenModalAdd] = useState(false);
@@ -58,6 +59,12 @@ const Layout = ({getPostSaga}) => {
 
   return (
     <div className="max-w-[768px] mx-auto py-10 px-4">
+      <Helmet>
+        <title>Virtual Spirit | POST</title>
+        <meta name="keywords" content="HTML,CSS,JavaScript,React" />
+        <meta name="description" content="Small project test for recruitment" />
+      </Helmet>
+
       <ToastContainer />
 
       <div className="text-center text-2xl font-bold mb-10 tracking-wide">

@@ -27,7 +27,7 @@ export const createPost = async (payload) => {
 // Update Post
 export const updatePost = async (payload) => {
   return axios
-    .put(`posts/${payload.id}`, payload.body)
+    .patch(`posts/${payload.id}`, payload.body)
     .then(function (response) {
       return response;
     })
