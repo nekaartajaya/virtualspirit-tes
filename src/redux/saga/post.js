@@ -27,9 +27,9 @@ function* getPostSaga({payload}) {
 function* createPostSaga({payload}) {
   yield put({type: SET_LOADING_CUD});
 
-  yield call(createPost, payload);
+  const post = yield call(createPost, payload);
 
-  yield put({type: CREATE_POST, payload: payload});
+  yield put({type: CREATE_POST, payload: post.data});
 }
 
 function* updatePostSaga({payload}) {
