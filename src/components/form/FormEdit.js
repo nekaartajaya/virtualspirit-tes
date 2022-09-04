@@ -20,11 +20,15 @@ const FormEdit = ({updatePostSaga, ...props}) => {
     },
   });
 
-  useEffect(() => {
+  const resetFormValue = () => {
     formikEdit.setFieldValue('id', props?.data?.id ?? '');
     formikEdit.setFieldValue('userId', props?.data?.userId ?? '');
     formikEdit.setFieldValue('title', props?.data?.title ?? '');
     formikEdit.setFieldValue('body', props?.data?.body ?? '');
+  };
+
+  useEffect(() => {
+    resetFormValue();
   }, [props?.data]);
 
   return (
@@ -32,7 +36,10 @@ const FormEdit = ({updatePostSaga, ...props}) => {
       isOpen={props.isOpenModalEdit}
       title={'Edit Post'}
       type={'medium'}
-      onClose={() => props.onClose()}
+      onClose={() => {
+        props.onClose();
+        resetFormValue();
+      }}
     >
       <div className="text-[14px] text-[#344054] my-6">
         <div className="mb-6">
@@ -42,6 +49,7 @@ const FormEdit = ({updatePostSaga, ...props}) => {
             variant="outlined"
             fullWidth
             onChange={(e) => formikEdit.setFieldValue('title', e.target.value)}
+            error={!formikEdit.values.title}
           />
         </div>
         <div>
@@ -53,6 +61,7 @@ const FormEdit = ({updatePostSaga, ...props}) => {
             minRows={4}
             multiline
             onChange={(e) => formikEdit.setFieldValue('body', e.target.value)}
+            error={!formikEdit.values.body}
           />
         </div>
       </div>
@@ -64,6 +73,7 @@ const FormEdit = ({updatePostSaga, ...props}) => {
             color="info"
             onClick={() => {
               props.onClose();
+              resetFormValue();
             }}
           >
             Cancel
@@ -74,7 +84,7 @@ const FormEdit = ({updatePostSaga, ...props}) => {
           variant="contained"
           color="warning"
           onClick={() => formikEdit.handleSubmit()}
-          disabled={loadingCUD}
+          disabled={loadingCUD || !formikEdit.values.title || !formikEdit.values.body}
         >
           {loadingCUD ? 'Updating...' : 'Update'}
         </Button>

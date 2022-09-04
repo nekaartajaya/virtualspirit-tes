@@ -7,6 +7,11 @@ import CustomModal from '../CustomModal';
 const FormAdd = ({createPostSaga, ...props}) => {
   const {loadingCUD} = useSelector((state) => state.postReducer);
 
+  const resetFormValue = () => {
+    formikAdd.setFieldValue('title', '');
+    formikAdd.setFieldValue('body', '');
+  };
+
   const formikAdd = useFormik({
     initialValues: {
       userId: 1,
@@ -23,7 +28,10 @@ const FormAdd = ({createPostSaga, ...props}) => {
       isOpen={props.isOpenModalAdd}
       title={'Add New Post'}
       type={'medium'}
-      onClose={() => props.onClose()}
+      onClose={() => {
+        props.onClose();
+        resetFormValue();
+      }}
     >
       <div className="text-[14px] text-[#344054] my-6">
         <div className="mb-6">
@@ -33,6 +41,7 @@ const FormAdd = ({createPostSaga, ...props}) => {
             variant="outlined"
             fullWidth
             onChange={(e) => formikAdd.setFieldValue('title', e.target.value)}
+            error={!formikAdd.values.title}
           />
         </div>
         <div>
@@ -44,6 +53,7 @@ const FormAdd = ({createPostSaga, ...props}) => {
             minRows={4}
             multiline
             onChange={(e) => formikAdd.setFieldValue('body', e.target.value)}
+            error={!formikAdd.values.body}
           />
         </div>
       </div>
@@ -55,6 +65,7 @@ const FormAdd = ({createPostSaga, ...props}) => {
             color="info"
             onClick={() => {
               props.onClose();
+              resetFormValue();
             }}
           >
             Cancel
@@ -65,7 +76,7 @@ const FormAdd = ({createPostSaga, ...props}) => {
           variant="contained"
           color="success"
           onClick={() => formikAdd.handleSubmit()}
-          disabled={loadingCUD}
+          disabled={loadingCUD || !formikAdd.values.title || !formikAdd.values.body}
         >
           {loadingCUD ? 'Creating...' : 'Create'}
         </Button>
